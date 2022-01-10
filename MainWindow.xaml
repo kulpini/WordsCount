@@ -1,0 +1,91 @@
+﻿<Window x:Class="WordsCount.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WordsCount.ViewModel"
+        mc:Ignorable="d"
+        Title="Подсчёт слов" Height="450" Width="800"
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.DataContext>
+        <local:TextViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+            <StatusBar Grid.ColumnSpan="4" Margin="0,0,0,10" Style="{StaticResource statusStyle}">
+            <StatusBarItem HorizontalAlignment="Center">
+                <TextBlock Text="{Binding Path=StatusMessage}" Margin="10,0,0,0"/>
+            </StatusBarItem>
+            </StatusBar>
+        
+        <TextBlock Text="Идентификаторы строк:" Grid.Row="1" Grid.Column="0" Margin="10,0,10,0" MinWidth="50"/>
+        <TextBox MinWidth="150" MaxWidth="300" Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" HorizontalAlignment="Stretch" Validation.Error="TextBox_Error">
+            <TextBox.Text>
+                <Binding Path="IDString" UpdateSourceTrigger="PropertyChanged" ValidatesOnDataErrors="True" NotifyOnValidationError="True">
+                    <Binding.ValidationRules>
+                        <DataErrorValidationRule/>
+                    </Binding.ValidationRules>
+                </Binding>
+            </TextBox.Text>
+        </TextBox>
+        <Button Grid.Row="1" Grid.Column="2" Command="{Binding MakeTextAnalysis}" CommandParameter="{Binding IDString}" Content="Подсчитать" MinWidth="70" MaxWidth="150"/>
+
+        <ListView x:Name="TextList" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Margin="10,10,20,30" 
+                  Style="{StaticResource commonStyle}" HorizontalContentAlignment="Stretch"
+                  ItemsSource="{Binding ElementsList}" BorderThickness="2,2,2,2" ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#FF040404" IsManipulationEnabled="True" SelectionMode="Single" SizeChanged="TextList_SizeChanged">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View >
+                <GridView AllowsColumnReorder="False" ColumnHeaderContainerStyle="{StaticResource myHeaderStyle}">
+                    <GridViewColumn Header="Текст">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Left" TextWrapping="WrapWithOverflow" Text="{Binding Text}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="Количество слов" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding WordsCount}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn>
+                        <GridViewColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="Количество гласных" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </GridViewColumn.HeaderTemplate>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding VowelsCount}" TextAlignment="Center" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
